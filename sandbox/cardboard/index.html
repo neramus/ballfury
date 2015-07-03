@@ -21,10 +21,10 @@
   <body>
     <div id="example"></div>
 
-  <script src="/ballfury/js/third-party/threejs/three.js"></script>
-  <script src="/ballfury/js/third-party/threejs/StereoEffect.js"></script>
-  <script src="/ballfury/js/third-party/threejs/DeviceOrientationControls.js"></script>
-  <script src="/ballfury/js/third-party/threejs/OrbitControls.js"></script>
+  <script src="../../js/third-party/threejs/three.js"></script>
+  <script src="../../js/third-party/threejs/StereoEffect.js"></script>
+  <script src="../../js/third-party/threejs/DeviceOrientationControls.js"></script>
+  <script src="../../js/third-party/threejs/OrbitControls.js"></script>
 
   <script>
     var camera, scene, renderer;
@@ -78,10 +78,11 @@
 
       var light = new THREE.HemisphereLight(0x777777, 0x000000, 0.6);
       scene.add(light);
+	// load image (http://stackoverflow.com/questions/24087757/three-js-and-loading-a-cross-domain-image)
+	
+	THREE.ImageUtils.crossOrigin = '';
+	var texture = THREE.ImageUtils.loadTexture('http://i.imgur.com/MeNgiHb.png');
 
-      var texture = THREE.ImageUtils.loadTexture(
-        'textures/patterns/checker.png'
-      );
       texture.wrapS = THREE.RepeatWrapping;
       texture.wrapT = THREE.RepeatWrapping;
       texture.repeat = new THREE.Vector2(50, 50);
