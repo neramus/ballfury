@@ -2,3 +2,5 @@ sandbox/cardboard/js/.DS_Store
 sandbox/cardboard/.DS_Store
 sandbox/cardboard/textures/.DS_Store
 *.DS_Store
+tmp/
+sandbox/skybox/pisa/
