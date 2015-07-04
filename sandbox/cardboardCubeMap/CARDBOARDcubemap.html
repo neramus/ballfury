@@ -28,10 +28,9 @@
   	<script src="../../js/third-party/threejs/Detector.js"></script>
 
   <script>
-  if ( ! Detector.webgl ) Detector.addGetWebGLMessage();
   
     var camera, scene, renderer;
-    var effect, controls;
+    var effect, effectCube, controls;
     var element, container;
 	
 	// CAMERA CUBE VARS
@@ -52,15 +51,16 @@
       container.appendChild(element);
 
       effect = new THREE.StereoEffect(renderer);
-
+		effectCube = new THREE.StereoEffect(renderer);
       scene = new THREE.Scene();
 	  sceneCube = new THREE.Scene();
 	  
 	  addCubeMapSpheres();
 	  
-      camera = new THREE.PerspectiveCamera( 60, window.innerWidth / window.innerHeight, 1, 100000 );
-				camera.position.z = 3200;
-	  cameraCube = new THREE.PerspectiveCamera( 60, window.innerWidth / window.innerHeight, 1, 100000 );
+      camera = new THREE.PerspectiveCamera(90, 1, 0.001, 700);
+      camera.position.set(0, 10, 0);
+				 camera.position.set(0, 10, 0);
+	  cameraCube = new THREE.PerspectiveCamera(90, 1, 0.001, 700);
       scene.add(camera);
 
       controls = new THREE.OrbitControls(camera, element);
@@ -122,8 +122,10 @@
 	  			camera.lookAt( scene.position );
 				cameraCube.rotation.copy( camera.rotation );
 
-				effect.render( sceneCube, cameraCube );
+				effectCube.render( sceneCube, cameraCube );
 				effect.render(scene, camera);
+				
+				
 	  
     }
 
@@ -178,9 +180,9 @@
 
 					var mesh = new THREE.Mesh( geometry, material );
 
-					mesh.position.x = Math.random() * 10000 - 5000;
-					mesh.position.y = Math.random() * 10000 - 5000;
-					mesh.position.z = Math.random() * 10000 - 5000;
+					mesh.position.x = Math.random() * 100 - 50;
+					mesh.position.y = Math.random() * 100- 50;
+					mesh.position.z = Math.random() * 100 - 50;
 
 					mesh.scale.x = mesh.scale.y = mesh.scale.z = Math.random() * 2 + 1;
 
