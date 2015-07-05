@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<title>Core spheres</title>
+<title>Raycaster basic Cardboard</title>
 <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
 <meta name="viewport" content="width=device-width, user-scalable=no, minimum-scale=1.0, maximum-scale=1.0">
 <style>
@@ -16,12 +16,12 @@ left: 0;
 right: 0;
 bottom: 0;
 }
-</style>
+</style>	
 </head>
 <body>
 <div id="example"></div>
 
-<script src="../../js/third-party/threejs/three.js"></script>
+<script src="../../js/third-party/threejs/three.min.js"></script>
 <script src="../../js/third-party/threejs/StereoEffect.js"></script>
 <script src="../../js/third-party/threejs/DeviceOrientationControls.js"></script>
 <script src="../../js/third-party/threejs/OrbitControls.js"></script>
@@ -31,12 +31,18 @@ var camera, scene, renderer;
 var effect, controls;
 var element, container;
 
-var sphere, sphere2;
+var sphere;
 var frameTime;
 
 var clock = new THREE.Clock();
 
 var start = new Date();
+
+//raycast stuff
+// raycaster
+var center = new THREE.Vector2(), INTERSECTED;
+var raycaster;
+var mesh;
 
 init();
 animate();
@@ -44,13 +50,10 @@ animate();
 function addSphere()
 {
 	var geometry = new THREE.SphereGeometry( 100, 32, 16 );
-	var material = new THREE.MeshLambertMaterial( { color: 0x000088 } );
-	var material2 = new THREE.MeshLambertMaterial( { color: 0xff0088 } );
+	var material = new THREE.MeshLambertMaterial( { color: 0xffffff } );
 	sphere = new THREE.Mesh( geometry, material );
-	sphere2 = new THREE.Mesh( geometry, material2 );
-	sphere.position.set(100,100,500);
+	sphere.position.set(100,100,900);
 	scene.add(sphere);
-	scene.add(sphere2);
 }
 
 function addLight()
@@ -65,13 +68,24 @@ function addLight()
 	scene.add( sunLight );
 }
 
-updateSpheres()
+function addBasicLight( x,  y,  z)
 {
-	
+	var light = new THREE.PointLight(0xffffff);
+	light.position.set(x,y,z);
+	scene.add(light);
+}
+
+function addSkyBox()
+{
+		// SKYBOX
+	var skyBoxGeometry = new THREE.CubeGeometry( 1200,990,1200);
+	var skyBoxMaterial = new THREE.MeshBasicMaterial( { color: 0x9999ff, side: THREE.BackSide } );
+	var skyBox = new THREE.Mesh( skyBoxGeometry, skyBoxMaterial );
+	scene.add(skyBox);
 }
 
 function init() {
-	renderer = new THREE.WebGLRenderer();
+	renderer = new THREE.WebGLRenderer( {antialias:true} );
 	element = renderer.domElement;
 	container = document.getElementById('example');
 	container.appendChild(element);
@@ -82,7 +96,15 @@ function init() {
 
 	addSphere();
 	
-	camera = new THREE.PerspectiveCamera(90, 1, 0.001, 700);
+	/*
+	var SCREEN_WIDTH = window.innerWidth, SCREEN_HEIGHT = window.innerHeight;
+	var VIEW_ANGLE = 45, ASPECT = SCREEN_WIDTH / SCREEN_HEIGHT, NEAR = 0.1, FAR = 20000;
+	camera = new THREE.PerspectiveCamera( VIEW_ANGLE, ASPECT, NEAR, FAR);
+	camera.position.set(0,150,400);
+	*/
+	
+	
+	camera = new THREE.PerspectiveCamera(90, 1, 0.001, 1000);
 	camera.position.set(0, 50, 0);
 	scene.add(camera);
 
@@ -111,8 +133,9 @@ function init() {
 	}
 	window.addEventListener('deviceorientation', setOrientationControls, true);
 
-	addLight();
-
+	addBasicLight(-700,100,100);
+	addBasicLight(1500,1000,0);
+	//addSkyBox();
 	
 	THREE.ImageUtils.crossOrigin = '';
 	var texture = THREE.ImageUtils.loadTexture('http://i.imgur.com/MeNgiHb.png');
@@ -138,6 +161,9 @@ map: texture
 	
 	window.addEventListener('resize', resize, false);
 	setTimeout(resize, 1);
+	
+	// raycaster
+	raycaster = new THREE.Raycaster();
 }
 
 function resize() {
@@ -155,9 +181,42 @@ function update(dt) {
 	resize();
 	camera.updateProjectionMatrix();
 	controls.update(dt);
+	
+		center.x = 0;
+	center.y = 0;
 }
 
-function render() {
+function render(dt) {
+
+	camera.updateMatrixWorld();
+	raycaster.setFromCamera( center, camera );
+	
+	
+	var intersects = raycaster.intersectObject( sphere );
+
+	if ( intersects.length > 0 ) {
+
+		if ( INTERSECTED != intersects[ 0 ].object ) {
+
+			if ( INTERSECTED ) INTERSECTED.material.emissive.setHex( INTERSECTED.currentHex );
+
+			
+			INTERSECTED = intersects[ 0 ].object;
+			INTERSECTED.currentHex = INTERSECTED.material.emissive.getHex();
+			INTERSECTED.material.emissive.setHex( 0xff0000 );
+			
+			console.log("INTERSECTED")
+		}
+
+	} else {
+
+		if ( INTERSECTED ) INTERSECTED.material.emissive.setHex( INTERSECTED.currentHex );
+
+		INTERSECTED = null;
+
+	}
+	
+
 	effect.render(scene, camera);
 }
 
@@ -172,8 +231,9 @@ function animate(t) {
 	//sphere.position.x = Math.cos(time*.001)*500;
 	
 	//sphere2.position.z = Math.cos(time*.001)*400;
+	//camera.position.x = Math.sin(time*.001)*500;
 	update(clock.getDelta());
-	render();
+	render(clock.getDelta());
 }
 
 function fullscreen() 
