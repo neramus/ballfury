@@ -1,0 +1,155 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<title>basic raycaster</title>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<meta name="viewport" content="width=device-width, user-scalable=no, minimum-scale=1.0, maximum-scale=1.0">
+
+</head>
+<body>
+<div id="example"></div>
+
+<script src="../../js/third-party/threejs/three.min.js"></script>
+
+<script src="../../js/third-party/threejs/OrbitControls.js"></script>
+
+<div id="ThreeJS" style="position: absolute; left:0px; top:0px"></div>
+
+<script>
+// MAIN
+
+// standard global variables
+var container, scene, camera, renderer, controls, stats;
+var clock = new THREE.Clock();
+
+// custom global variables
+var mesh;
+
+// raycaster
+var center = new THREE.Vector2(), INTERSECTED;
+var raycaster;
+var mesh;
+
+init();
+animate();
+
+// FUNCTIONS 		
+function init() 
+{
+	// SCENE
+	scene = new THREE.Scene();
+	// CAMERA
+	var SCREEN_WIDTH = window.innerWidth, SCREEN_HEIGHT = window.innerHeight;
+	var VIEW_ANGLE = 45, ASPECT = SCREEN_WIDTH / SCREEN_HEIGHT, NEAR = 0.1, FAR = 20000;
+	camera = new THREE.PerspectiveCamera( VIEW_ANGLE, ASPECT, NEAR, FAR);
+	scene.add(camera);
+	camera.position.set(0,150,400);
+	camera.lookAt(scene.position);	
+	// RENDERER
+	
+	renderer = new THREE.WebGLRenderer( {antialias:true} );
+	
+	renderer.setSize(SCREEN_WIDTH, SCREEN_HEIGHT);
+	container = document.getElementById( 'ThreeJS' );
+	container.appendChild( renderer.domElement );
+	// EVENTS
+	//THREEx.WindowResize(renderer, camera);
+	//THREEx.FullScreen.bindKey({ charCode : 'm'.charCodeAt(0) });
+	// CONTROLS
+	controls = new THREE.OrbitControls( camera, renderer.domElement );
+	// STATS
+	/*
+	stats = new Stats();
+	stats.domElement.style.position = 'absolute';
+	stats.domElement.style.bottom = '0px';
+	stats.domElement.style.zIndex = 100;
+	container.appendChild( stats.domElement );
+	*/
+	// LIGHT
+	var light = new THREE.PointLight(0xffffff);
+	light.position.set(100,250,100);
+	scene.add(light);
+	// FLOOR
+	var floorTexture = new THREE.ImageUtils.loadTexture( '../cardboard/textures/patterns/checker.png' );
+	floorTexture.wrapS = floorTexture.wrapT = THREE.RepeatWrapping; 
+	floorTexture.repeat.set( 10, 10 );
+	var floorMaterial = new THREE.MeshBasicMaterial( { map: floorTexture, side: THREE.DoubleSide } );
+	var floorGeometry = new THREE.PlaneGeometry(1000, 1000, 10, 10);
+	var floor = new THREE.Mesh(floorGeometry, floorMaterial);
+	floor.position.y = -0.5;
+	floor.rotation.x = Math.PI / 2;
+	scene.add(floor);
+	// SKYBOX
+	var skyBoxGeometry = new THREE.CubeGeometry( 10000, 10000, 10000 );
+	var skyBoxMaterial = new THREE.MeshBasicMaterial( { color: 0x9999ff, side: THREE.BackSide } );
+	var skyBox = new THREE.Mesh( skyBoxGeometry, skyBoxMaterial );
+	scene.add(skyBox);
+	
+	// raycaster
+	raycaster = new THREE.Raycaster();
+	
+	
+	////////////
+	// CUSTOM //
+	////////////
+	
+	var geometry = new THREE.SphereGeometry( 30, 32, 16 );
+	var material = new THREE.MeshLambertMaterial( { color: 0x000088 } );
+	mesh = new THREE.Mesh( geometry, material );
+	mesh.position.set(0,40,0);
+	scene.add(mesh);
+	
+}
+
+function animate() 
+{
+	requestAnimationFrame( animate );
+	render();		
+	update();
+}
+
+function update()
+{
+	controls.update();
+	center.x = 0;
+	center.y = 0;
+}
+
+function render() 
+{
+
+	camera.updateMatrixWorld();
+	//raycastger
+	raycaster.setFromCamera( center, camera );
+	
+	var intersects = raycaster.intersectObject( mesh );
+
+	if ( intersects.length > 0 ) {
+
+		if ( INTERSECTED != intersects[ 0 ].object ) {
+
+			if ( INTERSECTED ) INTERSECTED.material.emissive.setHex( INTERSECTED.currentHex );
+
+			
+			INTERSECTED = intersects[ 0 ].object;
+			INTERSECTED.currentHex = INTERSECTED.material.emissive.getHex();
+			INTERSECTED.material.emissive.setHex( 0xff0000 );
+			
+			console.log("INTERSECTED")
+		}
+
+	} else {
+
+		if ( INTERSECTED ) INTERSECTED.material.emissive.setHex( INTERSECTED.currentHex );
+
+		INTERSECTED = null;
+
+	}
+
+	
+
+	renderer.render( scene, camera );
+}
+</script>
+</body>
+</html>
