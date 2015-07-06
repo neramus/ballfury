@@ -21,7 +21,7 @@ bottom: 0;
 <body>
 <div id="example"></div>
 
-<script src="../../js/third-party/threejs/three.js"></script>
+<script src="../../js/third-party/threejs/three.min.js"></script>
 <script src="../../js/third-party/threejs/StereoEffect.js"></script>
 <script src="../../js/third-party/threejs/DeviceOrientationControls.js"></script>
 <script src="../../js/third-party/threejs/OrbitControls.js"></script>
@@ -61,12 +61,36 @@ function addSphere()
 function addLight()
 {
 	
-     var light = new THREE.HemisphereLight(0x777777, 0x000000, 0.6);
+	//var light = new THREE.HemisphereLight(0x999999, 0x000000, 0.9);
+	//scene.add(light);
+	
+	/*
+	var sunLight = new THREE.DirectionalLight( 'rgb(255,255,255)',1.5);
+	sunLight.position.set( 0, 10000, - 1 );
+	sunLight.lookAt( scene.position );
+	*/
+	      var light = new THREE.HemisphereLight(0x777777, 0x000000, 0.6);
       scene.add(light);
+	// scene.add( sunLight );
 }
 
+function addBasicLight( x,  y,  z)
+{
+	var light = new THREE.PointLight(0xffffff);
+	light.position.set(x,y,z);
+	light.lookAt( scene.position );
+	scene.add(light);
+	
+}
 
-
+function addSkyBox()
+{
+		// SKYBOX
+	var skyBoxGeometry = new THREE.CubeGeometry( 1200,990,1200);
+	var skyBoxMaterial = new THREE.MeshBasicMaterial( { color: 0x9999ff, side: THREE.BackSide } );
+	var skyBox = new THREE.Mesh( skyBoxGeometry, skyBoxMaterial );
+	scene.add(skyBox);
+}
 
 function init() {
 	renderer = new THREE.WebGLRenderer();
@@ -78,7 +102,7 @@ function init() {
 
 	scene = new THREE.Scene();
 
-	//addSphere();
+	addSphere();
 	
 	/*
 	var SCREEN_WIDTH = window.innerWidth, SCREEN_HEIGHT = window.innerHeight;
@@ -151,6 +175,7 @@ function init() {
 	setTimeout(resize, 1);
 	
 	// raycaster
+	raycaster = new THREE.Raycaster();
 }
 
 function resize() {
@@ -176,7 +201,7 @@ function update(dt) {
 function render(dt) {
 
 	// camera.updateMatrixWorld();
-	/*
+	
 	raycaster.setFromCamera( center, camera );
 	
 	
@@ -204,7 +229,7 @@ function render(dt) {
 
 	}
 	
-*/
+
 	effect.render(scene, camera);
 }
 
