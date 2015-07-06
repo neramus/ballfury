@@ -106,7 +106,7 @@ function init() {
 	
 	
 	camera = new THREE.PerspectiveCamera(90, 1, 0.001, 700);
-	camera.position.set(0, 50, 0);
+	camera.position.set(0, 10, 0);
 	scene.add(camera);
 
 	controls = new THREE.OrbitControls(camera, element);
@@ -134,8 +134,11 @@ function init() {
 	}
 	window.addEventListener('deviceorientation', setOrientationControls, true);
 
-	addBasicLight(-700,100,100);
-	addBasicLight(1500,1000,0);
+	// addBasicLight(-700,100,100);
+	// addBasicLight(1500,1000,0);
+	
+	addLight();
+	
 	//addSkyBox();
 	
 	THREE.ImageUtils.crossOrigin = '';
@@ -189,7 +192,7 @@ function update(dt) {
 
 function render(dt) {
 
-	camera.updateMatrixWorld();
+	// camera.updateMatrixWorld();
 	raycaster.setFromCamera( center, camera );
 	
 	
