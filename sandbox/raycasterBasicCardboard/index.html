@@ -7,7 +7,7 @@
 <style>
 body {
 margin: 0px;
-overflow: hidden;
+overflow: hidden; 
 }
 #example {
 position: absolute;
@@ -56,16 +56,22 @@ function addSphere()
 	scene.add(sphere);
 }
 
+
+
 function addLight()
 {
 	
 	var light = new THREE.HemisphereLight(0x999999, 0x000000, 0.9);
 	//scene.add(light);
 	
+	/*
 	var sunLight = new THREE.DirectionalLight( 'rgb(255,255,255)',1.5);
 	sunLight.position.set( 0, 10000, - 1 );
 	sunLight.lookAt( scene.position );
-	scene.add( sunLight );
+	*/
+	      var light = new THREE.HemisphereLight(0x777777, 0x000000, 0.6);
+      scene.add(light);
+	// scene.add( sunLight );
 }
 
 function addBasicLight( x,  y,  z)
@@ -74,6 +80,7 @@ function addBasicLight( x,  y,  z)
 	light.position.set(x,y,z);
 	light.lookAt( scene.position );
 	scene.add(light);
+	
 }
 
 function addSkyBox()
@@ -149,13 +156,14 @@ function init() {
 	texture.repeat = new THREE.Vector2(50, 50);
 	texture.anisotropy = renderer.getMaxAnisotropy();
 
-	var material = new THREE.MeshPhongMaterial({
-color: 0xc0c0c0c,
-specular: 0xc0c0c0,
-shininess: 15,
-shading: THREE.FlatShading,
-map: texture
-	});
+	   var material = new THREE.MeshPhongMaterial({
+        color: 0xffffff,
+        specular: 0xffffff,
+        shininess: 20,
+        shading: THREE.FlatShading,
+        map: texture
+      });
+
 
 	var geometry = new THREE.PlaneGeometry(1000, 1000);
 
