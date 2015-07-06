@@ -21,7 +21,7 @@ bottom: 0;
 <body>
 <div id="example"></div>
 
-<script src="../../js/third-party/threejs/three.js68"></script>
+<script src="../../js/third-party/threejs/three.js"></script>
 <script src="../../js/third-party/threejs/StereoEffect.js"></script>
 <script src="../../js/third-party/threejs/DeviceOrientationControls.js"></script>
 <script src="../../js/third-party/threejs/OrbitControls.js"></script>
@@ -31,7 +31,7 @@ var camera, scene, renderer;
 var effect, controls;
 var element, container;
 
-var sphere;
+var spheres = [];
 var frameTime;
 
 var clock = new THREE.Clock();
@@ -49,222 +49,233 @@ animate();
 
 function addSphere()
 {
-	var geometry = new THREE.SphereGeometry( 100, 32, 16 );
-	var material = new THREE.MeshLambertMaterial( { color: 0xffffff } );
-	sphere = new THREE.Mesh( geometry, material );
-	sphere.position.set(100,100,700);
-	scene.add(sphere);
+
 }
 
-
-
-function addLight()
+function addSpheres()
 {
+
+	var geometry = new THREE.SphereGeometry( 20, 32, 16 );
+	var material = new THREE.MeshLambertMaterial( { color: 0xffffff } );
 	
-	//var light = new THREE.HemisphereLight(0x999999, 0x000000, 0.9);
-	//scene.add(light);
+	for (var i=0; i<20;i++)
+	{
+	sphere = new THREE.Mesh( geometry, new THREE.MeshLambertMaterial( { color: Math.random() * 0xffffff } ) );
+	// sphere.position.set(100,100,700);
 	
-	/*
+	sphere.position.x = Math.random() * 400 - 50;
+					sphere.position.y = Math.random() * 300;
+					sphere.position.z = Math.random() * 500 - 400;
+	
+	/*sphere.scale.x = Math.random() * 1 ;
+	sphere.scale.y = Math.random() * 1 ;
+	sphere.scale.z = Math.random() * 1 ;
+	*/
+	scene.add(sphere);
+	
+	spheres.push(sphere);
+	}
+
+}
+
+	function addLight()
+	{
+		
+		//var light = new THREE.HemisphereLight(0x999999, 0x000000, 0.9);
+		//scene.add(light);
+		
+		/*
 	var sunLight = new THREE.DirectionalLight( 'rgb(255,255,255)',1.5);
 	sunLight.position.set( 0, 10000, - 1 );
 	sunLight.lookAt( scene.position );
 	*/
-	      var light = new THREE.HemisphereLight(0x777777, 0x000000, 0.6);
-      scene.add(light);
-	// scene.add( sunLight );
-}
+		var light = new THREE.HemisphereLight(0x777777, 0x000000, 0.6);
+		scene.add(light);
+		// scene.add( sunLight );
+	}
 
-function addBasicLight( x,  y,  z)
-{
-	var light = new THREE.PointLight(0xffffff);
-	light.position.set(x,y,z);
-	light.lookAt( scene.position );
-	scene.add(light);
-	
-}
+	function addBasicLight( x,  y,  z)
+	{
+		var light = new THREE.PointLight(0xffffff);
+		light.position.set(x,y,z);
+		light.lookAt( scene.position );
+		scene.add(light);
+		
+	}
 
-function addSkyBox()
-{
+	function addSkyBox()
+	{
 		// SKYBOX
-	var skyBoxGeometry = new THREE.CubeGeometry( 1200,990,1200);
-	var skyBoxMaterial = new THREE.MeshBasicMaterial( { color: 0x9999ff, side: THREE.BackSide } );
-	var skyBox = new THREE.Mesh( skyBoxGeometry, skyBoxMaterial );
-	scene.add(skyBox);
-}
+		var skyBoxGeometry = new THREE.CubeGeometry( 1200,990,1200);
+		var skyBoxMaterial = new THREE.MeshBasicMaterial( { color: 0x9999ff, side: THREE.BackSide } );
+		var skyBox = new THREE.Mesh( skyBoxGeometry, skyBoxMaterial );
+		scene.add(skyBox);
+	}
 
-function init() {
-	renderer = new THREE.WebGLRenderer();
-	element = renderer.domElement;
-	container = document.getElementById('example');
-	container.appendChild(element);
+	function init() {
+		renderer = new THREE.WebGLRenderer();
+		element = renderer.domElement;
+		container = document.getElementById('example');
+		container.appendChild(element);
 
-	effect = new THREE.StereoEffect(renderer);
+		effect = new THREE.StereoEffect(renderer);
 
-	scene = new THREE.Scene();
+		scene = new THREE.Scene();
 
-	addSphere();
-	
-	/*
+		addSpheres();
+		
+		/*
 	var SCREEN_WIDTH = window.innerWidth, SCREEN_HEIGHT = window.innerHeight;
 	var VIEW_ANGLE = 45, ASPECT = SCREEN_WIDTH / SCREEN_HEIGHT, NEAR = 0.1, FAR = 20000;
 	camera = new THREE.PerspectiveCamera( VIEW_ANGLE, ASPECT, NEAR, FAR);
 	camera.position.set(0,150,400);
 	*/
-	
-	
-	camera = new THREE.PerspectiveCamera(90, 1, 0.001, 700);
-	camera.position.set(0, 10, 0);
-	scene.add(camera);
+		
+		
+		camera = new THREE.PerspectiveCamera(90, 1, 0.001, 700);
+		camera.position.set(0, 10, 0);
+		scene.add(camera);
 
-	controls = new THREE.OrbitControls(camera, element);
-	controls.rotateUp(Math.PI / 4);
-	controls.target.set(
-	camera.position.x + 0.1,
-	camera.position.y,
-	camera.position.z
-	);
-	controls.noZoom = true;
-	controls.noPan = true;
+		controls = new THREE.OrbitControls(camera, element);
+		controls.rotateUp(Math.PI / 4);
+		controls.target.set(
+		camera.position.x + 0.1,
+		camera.position.y,
+		camera.position.z
+		);
+		controls.noZoom = true;
+		controls.noPan = true;
 
-	function setOrientationControls(e) {
-		if (!e.alpha) {
-			return;
+		function setOrientationControls(e) {
+			if (!e.alpha) {
+				return;
+			}
+
+			controls = new THREE.DeviceOrientationControls(camera, true);
+			controls.connect();
+			controls.update();
+
+			element.addEventListener('click', fullscreen, false);
+
+			window.removeEventListener('deviceorientation', setOrientationControls, true);
 		}
+		window.addEventListener('deviceorientation', setOrientationControls, true);
 
-		controls = new THREE.DeviceOrientationControls(camera, true);
-		controls.connect();
-		controls.update();
+		// addBasicLight(-700,100,100);
+		// addBasicLight(1500,1000,0);
+		
+		addLight();
+		
+		//addSkyBox();
+		
+		THREE.ImageUtils.crossOrigin = '';
+		var texture = THREE.ImageUtils.loadTexture('http://i.imgur.com/MeNgiHb.png');
 
-		element.addEventListener('click', fullscreen, false);
+		texture.wrapS = THREE.RepeatWrapping;
+		texture.wrapT = THREE.RepeatWrapping;
+		texture.repeat = new THREE.Vector2(50, 50);
+		texture.anisotropy = renderer.getMaxAnisotropy();
 
-		window.removeEventListener('deviceorientation', setOrientationControls, true);
+		var material = new THREE.MeshPhongMaterial({
+color: 0xffffff,
+specular: 0xffffff,
+shininess: 20,
+shading: THREE.FlatShading,
+map: texture
+		});
+
+		
+		var geometry = new THREE.PlaneGeometry(1000, 1000);
+
+		var mesh = new THREE.Mesh(geometry, material);
+		mesh.rotation.x = -Math.PI / 2;
+		scene.add(mesh);
+		
+		window.addEventListener('resize', resize, false);
+		setTimeout(resize, 1);
+		
+		// raycaster
+		raycaster = new THREE.Raycaster();
 	}
-	window.addEventListener('deviceorientation', setOrientationControls, true);
 
-	// addBasicLight(-700,100,100);
-	// addBasicLight(1500,1000,0);
-	
-	addLight();
-	
-	//addSkyBox();
-	
-	THREE.ImageUtils.crossOrigin = '';
-	var texture = THREE.ImageUtils.loadTexture('http://i.imgur.com/MeNgiHb.png');
+	function resize() {
+		var width = container.offsetWidth;
+		var height = container.offsetHeight;
 
-	texture.wrapS = THREE.RepeatWrapping;
-	texture.wrapT = THREE.RepeatWrapping;
-	texture.repeat = new THREE.Vector2(50, 50);
-	texture.anisotropy = renderer.getMaxAnisotropy();
+		camera.aspect = width / height;
+		camera.updateProjectionMatrix();
 
-	   var material = new THREE.MeshPhongMaterial({
-        color: 0xffffff,
-        specular: 0xffffff,
-        shininess: 20,
-        shading: THREE.FlatShading,
-        map: texture
-      });
+		renderer.setSize(width, height);
+		effect.setSize(width, height);
+	}
 
-
-	var geometry = new THREE.PlaneGeometry(1000, 1000);
-
-	var mesh = new THREE.Mesh(geometry, material);
-	mesh.rotation.x = -Math.PI / 2;
-	scene.add(mesh);
-	
-	window.addEventListener('resize', resize, false);
-	setTimeout(resize, 1);
-	
-	// raycaster
-	raycaster = new THREE.Raycaster();
-}
-
-function resize() {
-	var width = container.offsetWidth;
-	var height = container.offsetHeight;
-
-	camera.aspect = width / height;
-	camera.updateProjectionMatrix();
-
-	renderer.setSize(width, height);
-	effect.setSize(width, height);
-}
-
-function update(dt) {
-	resize();
-	camera.updateProjectionMatrix();
-	controls.update(dt);
-	
+	function update(dt) {
+		resize();
+		camera.updateProjectionMatrix();
+		controls.update(dt);
+		
 		center.x = 0;
-	center.y = 0;
-}
+		center.y = 0;
+	}
 
-function render(dt) {
+	function render(dt) {
 
-	// camera.updateMatrixWorld();
-	/*
-	var projector = new THREE.Projector();
-	
-	
-	raycaster = projector.pickingRay( center, camera );
-	
-	
-	
-	var intersects = raycaster.intersectObject( sphere );
+		//camera.updateMatrixWorld();
+		//raycastger
+		raycaster.setFromCamera( center, camera );
+					var intersects = raycaster.intersectObjects( spheres );
 
-	if ( intersects.length > 0 ) {
+				if ( intersects.length > 0 ) {
 
-		if ( INTERSECTED != intersects[ 0 ].object ) {
+					if ( INTERSECTED != intersects[ 0 ].object ) {
 
-			if ( INTERSECTED ) INTERSECTED.material.emissive.setHex( INTERSECTED.currentHex );
+						if ( INTERSECTED ) INTERSECTED.material.emissive.setHex( INTERSECTED.currentHex );
 
-			
-			INTERSECTED = intersects[ 0 ].object;
-			INTERSECTED.currentHex = INTERSECTED.material.emissive.getHex();
-			INTERSECTED.material.emissive.setHex( 0xff0000 );
-			
-			console.log("INTERSECTED")
+						INTERSECTED = intersects[ 0 ].object;
+						INTERSECTED.currentHex = INTERSECTED.material.emissive.getHex();
+						INTERSECTED.material.emissive.setHex( 0xff0000 );
+
+					}
+
+				} else {
+
+					if ( INTERSECTED ) INTERSECTED.material.emissive.setHex( INTERSECTED.currentHex );
+
+					INTERSECTED = null;
+
+				}
+
+		effect.render(scene, camera);
+	}
+
+	function animate(t) {
+		requestAnimationFrame(animate);
+		
+		
+		//var time = new Date() - start;
+		// sphere.position.z = Math.sin(frameTime)*400;
+		//console.log(time);
+		//sphere.position.z = Math.sin(time*.001)*500;
+		//sphere.position.x = Math.cos(time*.001)*500;
+		
+		//sphere2.position.z = Math.cos(time*.001)*400;
+		//camera.position.x = Math.sin(time*.001)*500;
+		update(clock.getDelta());
+		render(clock.getDelta());
+	}
+
+	function fullscreen() 
+	{
+		if (container.requestFullscreen) {
+			container.requestFullscreen();
+		} else if (container.msRequestFullscreen) {
+			container.msRequestFullscreen();
+		} else if (container.mozRequestFullScreen) {
+			container.mozRequestFullScreen();
+		} else if (container.webkitRequestFullscreen) {
+			container.webkitRequestFullscreen();
 		}
-
-	} else {
-
-		if ( INTERSECTED ) INTERSECTED.material.emissive.setHex( INTERSECTED.currentHex );
-
-		INTERSECTED = null;
-
 	}
-	*/
-
-	effect.render(scene, camera);
-}
-
-function animate(t) {
-	requestAnimationFrame(animate);
-	
-	
-	//var time = new Date() - start;
-	// sphere.position.z = Math.sin(frameTime)*400;
-	//console.log(time);
-	//sphere.position.z = Math.sin(time*.001)*500;
-	//sphere.position.x = Math.cos(time*.001)*500;
-	
-	//sphere2.position.z = Math.cos(time*.001)*400;
-	//camera.position.x = Math.sin(time*.001)*500;
-	update(clock.getDelta());
-	render(clock.getDelta());
-}
-
-function fullscreen() 
-{
-	if (container.requestFullscreen) {
-		container.requestFullscreen();
-	} else if (container.msRequestFullscreen) {
-		container.msRequestFullscreen();
-	} else if (container.mozRequestFullScreen) {
-		container.mozRequestFullScreen();
-	} else if (container.webkitRequestFullscreen) {
-		container.webkitRequestFullscreen();
-	}
-}
-</script>
-</body>
-</html>
+	</script>
+	</body>
+	</html>

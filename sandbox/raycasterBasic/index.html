@@ -37,7 +37,7 @@ var container, scene, camera, renderer, controls, stats;
 var clock = new THREE.Clock();
 
 // custom global variables
-var mesh;
+var mesh, mesh2;
 
 // raycaster
 var center = new THREE.Vector2(), INTERSECTED;
@@ -112,7 +112,9 @@ function init()
 	mesh = new THREE.Mesh( geometry, material );
 	mesh.position.set(0,40,0);
 	scene.add(mesh);
-	
+	mesh2 = new THREE.Mesh( geometry, material );
+	mesh2.position.set(0,90,0);
+	scene.add(mesh2);
 }
 
 function animate() 
@@ -136,7 +138,7 @@ function render()
 	//raycastger
 	raycaster.setFromCamera( center, camera );
 	
-	var intersects = raycaster.intersectObject( mesh );
+	var intersects = raycaster.intersectObject( mesh2 );
 
 	if ( intersects.length > 0 ) {
 
