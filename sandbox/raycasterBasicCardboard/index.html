@@ -21,7 +21,7 @@ bottom: 0;
 <body>
 <div id="example"></div>
 
-<script src="../../js/third-party/threejs/three.js"></script>
+<script src="../../js/third-party/threejs/three.js68"></script>
 <script src="../../js/third-party/threejs/StereoEffect.js"></script>
 <script src="../../js/third-party/threejs/DeviceOrientationControls.js"></script>
 <script src="../../js/third-party/threejs/OrbitControls.js"></script>
@@ -201,8 +201,12 @@ function update(dt) {
 function render(dt) {
 
 	// camera.updateMatrixWorld();
+	/*
+	var projector = new THREE.Projector();
 	
-	raycaster.setFromCamera( center, camera );
+	
+	raycaster = projector.pickingRay( center, camera );
+	
 	
 	
 	var intersects = raycaster.intersectObject( sphere );
@@ -228,7 +232,7 @@ function render(dt) {
 		INTERSECTED = null;
 
 	}
-	
+	*/
 
 	effect.render(scene, camera);
 }
